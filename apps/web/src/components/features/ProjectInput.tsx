@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowRight, RotateCcw, Lock } from "lucide-react";
 import clsx from "clsx";
 import { Spinner } from "@/components/ui";
+import { useAuth } from "@/contexts/AuthContext";
 import type { PipelineStage } from "@/types";
 
 const EXAMPLES = [
@@ -46,12 +47,20 @@ const STAGE_MESSAGES: Partial<Record<PipelineStage, string>> = {
 
 export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
   const [value, setValue] = useState("");
+  const { user, signIn } = useAuth();
   const isLoading = ["extracting", "scoring", "reporting"].includes(stage);
   const isError = stage === "error";
 
   const handleSubmit = () => {
     const trimmed = value.trim();
     if (trimmed.length < 20 || isLoading) return;
+    
+    // Check if user is authenticated
+    if (!user) {
+      signIn();
+      return;
+    }
+    
     onSubmit(trimmed);
   };
 
@@ -65,6 +74,18 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
 
   return (
     <div className="space-y-4">
+      {/* Authentication Notice */}
+      {!user && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3">
+          <Lock className="w-4 h-4 text-amber-600" />
+          <div className="flex-1">
+            <p className="text-sm text-amber-800">
+              Please sign in to use the AI-powered tech stack prediction.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Textarea */}
       <div className="relative">
         <textarea
@@ -129,6 +150,11 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
               <Spinner className="w-4 h-4" />
               <span>{STAGE_MESSAGES[stage] || "Processing..."}</span>
             </>
+          ) : !user ? (
+            <>
+              <span>Sign in to Predict Stack</span>
+              <ArrowRight className="w-4 h-4" />
+            </>
           ) : (
             <>
               <span>Predict Stack</span>
@@ -149,7 +175,7 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
           </button>
         )}
 
-        {!isLoading && value.trim().length >= 20 && (
+        {!isLoading && value.trim().length >= 20 && user && (
           <span className="text-ink-muted text-[12px] ml-1">
             Press <kbd className="font-mono bg-surface-2 px-1.5 py-0.5 rounded text-[11px] border border-border-subtle">Cmd+Enter</kbd>
           </span>

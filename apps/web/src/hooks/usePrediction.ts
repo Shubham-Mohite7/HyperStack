@@ -10,6 +10,8 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { predictStack } from "@/lib/apiClient";
+import { savePrediction } from "@/lib/database";
+import { useAuth } from "@/contexts/AuthContext";
 import type { PipelineState, PipelineStage, PredictionResult } from "@/types";
 
 const STAGE_SEQUENCE: PipelineStage[] = ["extracting", "scoring", "reporting"];
@@ -17,6 +19,7 @@ const STAGE_DURATIONS = [3000, 3500, 4000]; // ms — approximate time per stage
 
 export function usePrediction() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [state, setState] = useState<PipelineState>({
@@ -41,6 +44,11 @@ export function usePrediction() {
 
   const run = useCallback(
     async (description: string) => {
+      if (!user) {
+        setState({ stage: "error", result: null, error: "Please sign in to make predictions" });
+        return;
+      }
+
       clearTimers();
 
       setState({ stage: "extracting", result: null, error: null });
@@ -54,6 +62,14 @@ export function usePrediction() {
         const response = await predictStack(description);
         clearTimers();
 
+        // Save prediction to database
+        try {
+          await savePrediction(user.id, description, response.data);
+        } catch (dbError) {
+          console.error("Failed to save prediction to database:", dbError);
+          // Continue even if database save fails
+        }
+
         setState({ stage: "done", result: response.data, error: null });
 
         // Navigate to the results page, passing the result via router state
@@ -64,7 +80,7 @@ export function usePrediction() {
         setState({ stage: "error", result: null, error: message });
       }
     },
-    [navigate, advanceStage]
+    [navigate, advanceStage, user]
   );
 
   const reset = useCallback(() => {

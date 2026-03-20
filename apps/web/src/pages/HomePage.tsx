@@ -1,6 +1,7 @@
 import { usePrediction } from "@/hooks/usePrediction";
 import { ProjectInput } from "@/components/features/ProjectInput";
 import { PipelineStatus } from "@/components/features/PipelineStatus";
+import { PredictionHistory } from "@/components/features/PredictionHistory";
 
 /*
  * Feature list shown below the input area.
@@ -116,6 +117,11 @@ export function HomePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Prediction History */}
+      <section className="space-y-8">
+        <PredictionHistory />
       </section>
     </div>
   );
