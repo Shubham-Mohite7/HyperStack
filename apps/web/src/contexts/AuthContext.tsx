@@ -39,12 +39,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signIn = async () => {
-    const { signInWithGoogle } = await import('@/lib/supabase')
-    await signInWithGoogle()
+    try {
+      const { signInWithGoogle } = await import('@/lib/supabase')
+      await signInWithGoogle()
+    } catch (error) {
+      // Demo mode: Create a mock user when Supabase is not configured
+      console.warn('Running in demo mode - creating mock user')
+      const mockUser: AuthUser = {
+        id: 'demo-user',
+        email: 'demo@hyperstack.app',
+        name: 'Demo User',
+        avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=demo-user`
+      }
+      setUser(mockUser)
+    }
   }
 
   const logout = async () => {
-    await signOut()
+    try {
+      await signOut()
+    } catch (error) {
+      console.warn('Supabase not configured, just clearing mock user')
+    }
     setUser(null)
   }
 
