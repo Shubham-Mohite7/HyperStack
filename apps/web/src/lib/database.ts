@@ -24,7 +24,11 @@ export async function savePrediction(
   userId: string,
   projectDescription: string,
   predictionResult: any
-): Promise<Prediction> {
+): Promise<Prediction | null> {
+  if (!supabase) {
+    console.warn('Supabase not configured, skipping database save')
+    return null
+  }
   const { data, error } = await supabase
     .from('user_predictions')
     .insert([
@@ -43,6 +47,9 @@ export async function savePrediction(
 
 // Get all predictions for a user
 export async function getUserPredictions(userId: string): Promise<Prediction[]> {
+  if (!supabase) {
+    return []
+  }
   const { data, error } = await supabase
     .from('user_predictions')
     .select('*')
@@ -58,6 +65,9 @@ export async function getPredictionById(
   userId: string,
   predictionId: string
 ): Promise<Prediction | null> {
+  if (!supabase) {
+    return null
+  }
   const { data, error } = await supabase
     .from('user_predictions')
     .select('*')
@@ -74,6 +84,9 @@ export async function deletePrediction(
   userId: string,
   predictionId: string
 ): Promise<void> {
+  if (!supabase) {
+    return
+  }
   const { error } = await supabase
     .from('user_predictions')
     .delete()
@@ -84,7 +97,10 @@ export async function deletePrediction(
 }
 
 // Save or update user profile
-export async function saveUserProfile(user: AuthUser): Promise<UserProfile> {
+export async function saveUserProfile(user: AuthUser): Promise<UserProfile | null> {
+  if (!supabase) {
+    return null
+  }
   const { data, error } = await supabase
     .from('user_profiles')
     .upsert({
@@ -101,6 +117,9 @@ export async function saveUserProfile(user: AuthUser): Promise<UserProfile> {
 
 // Get user profile
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  if (!supabase) {
+    return null
+  }
   const { data, error } = await supabase
     .from('user_profiles')
     .select('*')
@@ -113,6 +132,12 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 
 // Get prediction statistics for a user
 export async function getUserPredictionStats(userId: string) {
+  if (!supabase) {
+    return {
+      totalPredictions: 0,
+      lastPredictionAt: null
+    }
+  }
   // Get total count
   const { count, error: countError } = await supabase
     .from('user_predictions')
