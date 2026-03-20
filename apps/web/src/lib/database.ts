@@ -113,15 +113,26 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 
 // Get prediction statistics for a user
 export async function getUserPredictionStats(userId: string) {
+  // Get total count
+  const { count, error: countError } = await supabase
+    .from('user_predictions')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+
+  if (countError) throw countError
+
+  // Get last prediction date
   const { data, error } = await supabase
     .from('user_predictions')
-    .select('id')
+    .select('created_at')
     .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
 
   if (error) throw error
   
   return {
-    totalPredictions: data?.length || 0,
+    totalPredictions: count || 0,
     lastPredictionAt: data?.length > 0 ? data[0].created_at : null
   }
 }
