@@ -1,4 +1,6 @@
 {
+  "buildCommand": "cd apps/web && npm run build && cp -r dist ../",
+  "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
       "memory": 1024,
