@@ -3,17 +3,11 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables are missing. Running in demo mode.')
-}
-
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        debug: false // Disable debug in production
-      }
-    })
-  : null
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    debug: false
+  }
+})
 
 export interface AuthUser {
   id: string
@@ -23,9 +17,6 @@ export interface AuthUser {
 }
 
 export const signInWithGoogle = async () => {
-  if (!supabase) {
-    throw new Error('Supabase is not configured. Please set environment variables.')
-  }
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -38,17 +29,11 @@ export const signInWithGoogle = async () => {
 }
 
 export const signOut = async () => {
-  if (!supabase) {
-    throw new Error('Supabase is not configured. Please set environment variables.')
-  }
   const { error } = await supabase.auth.signOut()
   if (error) throw error
 }
 
 export const getCurrentUser = async (): Promise<AuthUser | null> => {
-  if (!supabase) {
-    return null
-  }
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) return null
@@ -62,9 +47,6 @@ export const getCurrentUser = async (): Promise<AuthUser | null> => {
 }
 
 export const onAuthStateChange = (callback: (user: AuthUser | null) => void) => {
-  if (!supabase) {
-    return { data: { subscription: { unsubscribe: () => {} } } }
-  }
   return supabase.auth.onAuthStateChange(async (_event, session) => {
     if (session?.user) {
       const user = await getCurrentUser()
