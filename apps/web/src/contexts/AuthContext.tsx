@@ -15,27 +15,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Add a timeout to ensure loading is never stuck
+    const timeout = setTimeout(() => {
+      setLoading(false)
+      console.log('Auth timeout reached, showing sign in button')
+    }, 3000) // 3 seconds timeout
+
     // Get initial user
     const initializeAuth = async () => {
       try {
         const currentUser = await getCurrentUser()
         setUser(currentUser)
+        console.log('Auth initialized, user:', currentUser)
       } catch (error) {
         console.error('Error initializing auth:', error)
+        // If there's an error, set loading to false so button shows
+        setLoading(false)
       } finally {
         setLoading(false)
+        clearTimeout(timeout)
       }
     }
 
     initializeAuth()
 
     // Listen for auth changes
-    const { data: { subscription } } = onAuthStateChange((user) => {
-      setUser(user)
+    try {
+      const { data: { subscription } } = onAuthStateChange((user) => {
+        setUser(user)
+        setLoading(false)
+        console.log('Auth state changed, user:', user)
+        clearTimeout(timeout)
+      })
+      return () => {
+        subscription.unsubscribe()
+        clearTimeout(timeout)
+      }
+    } catch (error) {
+      console.error('Error setting up auth state change:', error)
       setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
+      clearTimeout(timeout)
+      return () => {}
+    }
   }, [])
 
   const signIn = async () => {
