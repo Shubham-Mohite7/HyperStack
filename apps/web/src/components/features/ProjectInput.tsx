@@ -94,9 +94,9 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
           onKeyDown={handleKeyDown}
           placeholder="Describe your project — what it does, who uses it, what scale you expect, team size, and any hard constraints..."
           disabled={isLoading}
-          rows={6}
+          rows={5}
           className={clsx(
-            "w-full resize-none rounded-xl px-5 py-4 text-[15px] leading-relaxed",
+            "w-full resize-none rounded-xl px-4 py-3 text-[14px] sm:text-[15px] sm:px-5 sm:py-4 leading-relaxed",
             "bg-surface-1 border text-ink-primary placeholder:text-ink-muted",
             "outline-none transition-all duration-200 font-sans",
             "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -105,10 +105,10 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
               : "border-border-subtle focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/20"
           )}
         />
-        <div className="absolute bottom-3 right-3 flex items-center gap-2">
+        <div className="absolute bottom-2.5 sm:bottom-3 right-2.5 sm:right-3 flex items-center gap-2">
           <span
             className={clsx(
-              "font-mono text-[11px] transition-colors",
+              "font-mono text-[10px] sm:text-[11px] transition-colors",
               value.length > 1800 ? "text-amber-400" : "text-ink-muted"
             )}
           >
@@ -118,15 +118,15 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
       </div>
 
       {/* Example chips */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="label-xs shrink-0">Try an example:</span>
+      <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+        <span className="label-xs shrink-0 text-[11px] sm:text-[12px]">Try:</span>
         {EXAMPLES.map(({ label, value: example }) => (
           <button
             key={label}
             onClick={() => setValue(example)}
             disabled={isLoading}
-            className="px-3 py-1 rounded-lg border border-border-subtle text-ink-secondary text-[12px] font-medium
-                       hover:border-border-default hover:text-ink-primary transition-all duration-150 disabled:opacity-40"
+            className="px-2 sm:px-3 py-1 rounded-lg border border-border-subtle text-ink-secondary text-[11px] sm:text-[12px] font-medium
+                       hover:border-border-default hover:text-ink-primary transition-all duration-150 disabled:opacity-40 whitespace-nowrap"
           >
             {label}
           </button>
@@ -134,12 +134,12 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
       </div>
 
       {/* Actions row */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 flex-col sm:flex-row">
         <button
           onClick={handleSubmit}
           disabled={isLoading || value.trim().length < 20}
           className={clsx(
-            "flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-medium text-[14px] transition-all duration-200",
+            "w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl font-medium text-[13px] sm:text-[14px] transition-all duration-200",
             "bg-accent-blue text-white",
             "hover:bg-blue-500 active:scale-[0.98]",
             "disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent-blue"
@@ -166,12 +166,12 @@ export function ProjectInput({ onSubmit, stage, onReset }: ProjectInputProps) {
         {(isLoading || isError) && (
           <button
             onClick={onReset}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border-subtle
-                       text-ink-secondary text-[14px] hover:border-border-default hover:text-ink-primary
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border-subtle
+                       text-ink-secondary text-[13px] sm:text-[14px] hover:border-border-default hover:text-ink-primary
                        transition-all duration-150"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset
+            <span>Reset</span>
           </button>
         )}
 

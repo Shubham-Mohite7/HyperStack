@@ -30,23 +30,23 @@ export function HomePage() {
   const { state, run, reset } = usePrediction();
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16 space-y-20">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16 space-y-12 sm:space-y-20">
 
       {/* Hero */}
-      <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-blue/30 bg-accent-blue/5 text-accent-blue text-[12px] font-mono font-medium">
+      <section className="text-center space-y-4 sm:space-y-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-blue/30 bg-accent-blue/5 text-accent-blue text-[11px] sm:text-[12px] font-mono font-medium">
           <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-pulse" />
           Powered by Llama 3 70B via Groq
         </div>
 
-        <div className="space-y-4">
-          <h1 className="font-display text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+        <div className="space-y-3 sm:space-y-4">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
             <span className="text-ink-primary">Predict the right</span>
             <br />
             <span className="text-accent-blue">tech stack.</span>
           </h1>
 
-          <p className="text-ink-secondary text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-ink-secondary text-base sm:text-lg leading-relaxed max-w-2xl mx-auto px-4">
             Describe your project in plain English. Get a precision-scored recommendation
             across every architectural layer — with reasoning, trade-offs, and
             bootstrap commands.
