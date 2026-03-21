@@ -76,8 +76,19 @@ export function usePrediction() {
         navigate("/results", { state: { result: response.data } });
       } catch (err) {
         clearTimers();
-        const message = err instanceof Error ? err.message : "Prediction failed";
-        setState({ stage: "error", result: null, error: message });
+        
+        // Handle rate limit errors specifically
+        const errorMessage = err instanceof Error ? err.message : "Prediction failed";
+        
+        if (errorMessage.includes("rate limit") || errorMessage.includes("Rate limit")) {
+          setState({ 
+            stage: "error", 
+            result: null, 
+            error: "Service temporarily unavailable. Please try again in a few minutes." 
+          });
+        } else {
+          setState({ stage: "error", result: null, error: errorMessage });
+        }
       }
     },
     [navigate, advanceStage, user]

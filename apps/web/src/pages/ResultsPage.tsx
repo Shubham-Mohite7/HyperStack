@@ -45,7 +45,9 @@ export function ResultsPage() {
         button.innerHTML = '<span class="animate-pulse">Generating PDF...</span>';
       }
 
-      // Create a temporary container with better styling for PDF
+      console.log('Starting PDF generation...');
+
+      // Create a simple container for PDF
       const tempContainer = document.createElement('div');
       tempContainer.style.cssText = `
         position: absolute;
@@ -54,95 +56,77 @@ export function ResultsPage() {
         width: 800px;
         padding: 40px;
         background: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
+        font-family: 'Times New Roman', serif;
+        line-height: 1.8;
         color: #1a1a1a;
       `;
 
-      // Create header
-      const header = document.createElement('div');
-      header.innerHTML = `
-        <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px;">
-          <h1 style="margin: 0; color: #3b82f6; font-size: 28px; font-weight: bold;">HyperStack</h1>
-          <p style="margin: 8px 0 0 0; color: #6b7280; font-size: 14px;">Tech Stack Recommendation Report</p>
-          <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 12px;">Generated: ${new Date(meta.timestamp).toLocaleString()}</p>
+      // Simple title page with logo
+      tempContainer.innerHTML = `
+        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #3b82f6;">
+          <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+            <div style="color: white; font-size: 32px; font-weight: bold; font-family: Arial, sans-serif;">HS</div>
+          </div>
+          <h1 style="margin: 0; color: #1f2937; font-size: 36px; font-weight: bold; font-family: 'Times New Roman', serif;">HyperStack</h1>
+          <h2 style="margin: 10px 0 0 0; color: #6b7280; font-size: 24px; font-family: 'Times New Roman', serif;">Tech Stack Recommendation Report</h2>
+          <p style="margin: 0; color: #374151; font-size: 16px; font-style: italic; font-family: 'Times New Roman', serif;">Generated: ${new Date(meta.timestamp).toLocaleString()}</p>
         </div>
-      `;
-
-      // Create requirements section
-      const requirementsSection = document.createElement('div');
-      requirementsSection.style.cssText = 'margin-bottom: 30px;';
-      const reqEntries = Object.entries(requirements);
-      requirementsSection.innerHTML = `
-        <h2 style="color: #1f2937; font-size: 20px; margin-bottom: 15px;">Project Requirements</h2>
-        <div style="background: #f9fafb; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-          ${reqEntries.map(([key, value]: [string, any]) => `
-            <div style="margin-bottom: 8px;">
-              <strong style="color: #374151;">${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
-              <span style="color: #6b7280;">${value}</span>
+        
+        <div style="margin-bottom: 40px;">
+          <h2 style="color: #1f2937; font-size: 24px; font-weight: bold; font-family: 'Times New Roman', serif;">Recommended Architecture</h2>
+          <div style="background: #eff6ff; padding: 30px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+            <p style="margin: 0; font-size: 18px; color: #1e40af; font-weight: 600; font-family: 'Times New Roman', serif;">
+              ${scored.architecture_pattern}
+            </p>
+            <p style="margin: 15px 0 0 0; color: #6b7280; font-family: 'Times New Roman', serif;">
+              Overall Confidence: <strong>${scored.overall_confidence}%</strong>
+            </p>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 40px;">
+          <h2 style="color: #1f2937; font-size: 24px; font-weight: bold; font-family: 'Times New Roman', serif;">Technology Recommendations</h2>
+          ${scored.recommendations.map((rec, index) => `
+            <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e5e7eb; border-radius: 12px; font-family: 'Times New Roman', serif;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: bold;">
+                  ${index + 1}. ${rec.primary_choice}
+                </h3>
+                <span style="background: ${rec.confidence >= 80 ? '#10b981' : rec.confidence >= 60 ? '#f59e0b' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                  ${rec.confidence}%
+                </span>
+              </div>
+              <p style="margin: 0; color: #6b7280; font-size: 16px; line-height: 1.6; font-family: 'Times New Roman', serif;">
+                ${rec.reason}
+              </p>
             </div>
           `).join('')}
         </div>
-      `;
-
-      // Create architecture section
-      const architectureSection = document.createElement('div');
-      architectureSection.style.cssText = 'margin-bottom: 30px;';
-      architectureSection.innerHTML = `
-        <h2 style="color: #1f2937; font-size: 20px; margin-bottom: 15px;">Recommended Architecture</h2>
-        <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-          <p style="margin: 0; font-size: 16px; color: #1e40af; font-weight: 600;">
-            ${scored.architecture_pattern}
-          </p>
-          <p style="margin: 10px 0 0 0; color: #6b7280;">
-            Overall Confidence: <strong>${scored.overall_confidence}%</strong>
-          </p>
-        </div>
-      `;
-
-      // Create tech stack section
-      const techStackSection = document.createElement('div');
-      techStackSection.style.cssText = 'margin-bottom: 30px;';
-      techStackSection.innerHTML = `
-        <h2 style="color: #1f2937; font-size: 20px; margin-bottom: 15px;">Recommended Tech Stack</h2>
-        ${scored.recommendations.map(rec => `
-          <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <h3 style="margin: 0; color: #1f2937; font-size: 16px;">${rec.primary_choice}</h3>
-              <span style="background: ${rec.confidence >= 80 ? '#10b981' : rec.confidence >= 60 ? '#f59e0b' : '#ef4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                ${rec.confidence}%
-              </span>
-            </div>
-            <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">${rec.reason}</p>
+        
+        <div style="margin-bottom: 40px;">
+          <h2 style="color: #1f2937; font-size: 24px; font-weight: bold; font-family: 'Times New Roman', serif;">Detailed Analysis</h2>
+          <div style="background: #f9fafb; padding: 30px; border-radius: 12px; border-left: 4px solid #3b82f6; font-family: 'Times New Roman', serif;">
+            ${report.replace(/\n/g, '<br>')}
           </div>
-        `).join('')}
-      `;
-
-      // Create report section
-      const reportSection = document.createElement('div');
-      reportSection.innerHTML = `
-        <h2 style="color: #1f2937; font-size: 20px; margin-bottom: 15px;">Detailed Analysis</h2>
-        <div style="background: #f9fafb; padding: 20px; border-radius: 8px;">
-          ${report.replace(/\n/g, '<br>')}
         </div>
       `;
-
-      // Add all sections to temp container
-      tempContainer.appendChild(header);
-      tempContainer.appendChild(requirementsSection);
-      tempContainer.appendChild(architectureSection);
-      tempContainer.appendChild(techStackSection);
-      tempContainer.appendChild(reportSection);
 
       document.body.appendChild(tempContainer);
+      console.log('Container added to DOM');
 
       // Generate PDF
       const canvas = await html2canvas(tempContainer, {
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        width: 800,
+        height: tempContainer.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
       });
+
+      console.log('Canvas generated, dimensions:', canvas.width, 'x', canvas.height);
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
@@ -154,8 +138,12 @@ export function ResultsPage() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
+      console.log('PDF dimensions calculated:', pdfWidth, 'x', pdfHeight);
+
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`hyperstack-report-${Date.now()}.pdf`);
+
+      console.log('PDF saved successfully');
 
       // Cleanup
       document.body.removeChild(tempContainer);

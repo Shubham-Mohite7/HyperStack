@@ -17,10 +17,16 @@ export interface AuthUser {
 }
 
 export const signInWithGoogle = async () => {
+  // Get the current origin for proper redirect
+  const getRedirectUrl = () => {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return isLocal ? `${window.location.origin}/` : 'https://hyperstack-five.vercel.app/';
+  };
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/`
+      redirectTo: getRedirectUrl()
     }
   })
   
