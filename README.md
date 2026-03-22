@@ -70,7 +70,7 @@ No questionnaires. No dropdowns. Just describe your project and get a senior arc
 ## Three-Stage AI Pipeline
 
 ```
-Your project description
+project description
          │
          ▼
 ┌─────────────────────────────────┐
