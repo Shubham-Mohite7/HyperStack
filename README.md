@@ -422,6 +422,6 @@ Built by **Shubham Mohite** &nbsp;&nbsp;
 
 <br />
 
-*If this helped you, consider giving it a star.*
+*✴️If this helped you, consider giving it a star.✴️*
 
 </div>
