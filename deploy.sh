@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HyperStack Deployment Script
+# HyperStack Deployment Scripts
 # This script helps deploy the HyperStack project to Vercel
 
 set -e
